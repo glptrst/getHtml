@@ -1,7 +1,7 @@
 "user strict";
-
 const http = require('http');
 const https = require('https');
+const fs = require('fs');
 
 const port = process.env.PORT || 3000;
 
@@ -15,7 +15,33 @@ const server = http.createServer((req, res) => {
 
     if (req.method === 'GET') {
 	if (req.url === '/') {
-	    getPage('https://www.google.com', res);
+	    fs.readFile('./public/homepage.html', (err, fileContent) => {
+		res.end(fileContent);
+	    });
+	} else {
+	    var splittedUrl = req.url.split('/');
+	    if (splittedUrl[1] === 'getpic') {
+		
+		// leave only link part in the array
+		splittedUrl.splice(0,2);
+		
+		// join with '/'
+		var link = splittedUrl.join('/');
+		// remove '?link=' from the beginning of string
+		link = decodeURIComponent(link.slice(6, link.length));
+		
+		getPage(link, res);
+
+	    } else {
+		res.statusCode = 404;
+		res.end('error');
+	    }
+	}
+    } else if (req.method === 'POST') {
+	if (req.url === '/getpic/') {
+	    console.log('Got post request at /getpic/');
+	    console.log(req); // Where is the body??
+	    //getPage('https://www.google.com', res);
 	} else {
 	    res.statusCode = 404;
 	    res.end('error');
@@ -26,6 +52,8 @@ const server = http.createServer((req, res) => {
     }
 });
 
+// Get an url and an http server response object.
+// End the server response with the content retrieved from the url.
 function getPage (url, handle) {
     https.get(url, (res) => {
 	const { statusCode } = res;
@@ -44,18 +72,15 @@ function getPage (url, handle) {
 	    try {
 		console.log(rawData);
 		handle.statusCode = 200;
-		handle.setHeader('Content-type', 'text/html');
+		handle.setHeader('Content-type', 'text/plain');
 		handle.end(rawData);
-		// return(rawData);
 	    } catch (e) {
 		console.error(e.message);
-		// return e.message;
 	    }
 	});
     }).on('error', (e) => {
 	console.error(`Got error: ${e.message}`);
     });
-
 };
 
 server.listen(port, () => {
