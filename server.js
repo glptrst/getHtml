@@ -16,7 +16,21 @@ const server = http.createServer((req, res) => {
     if (req.method === 'GET') {
 	if (req.url === '/') {
 	    fs.readFile('./public/homepage.html', (err, fileContent) => {
-		res.end(fileContent);
+		if (err) {
+		    console.log('Error 1');
+		} else {
+		    res.writeHead(200, {'Content-Type': 'text/html'});
+		    res.end(fileContent);
+		}
+	    });
+	} else if (req.url === '/public/scripts/test.js') {
+	    fs.readFile('./public/scripts/test.js', (err, fileContent) => {
+		if (err) {
+		    console.log('Error 2');
+		} else {
+		    res.writeHead(200, {'Content-Type': 'text/javascript'});
+		    res.end(fileContent);
+		}
 	    });
 	} else {
 	    var splittedUrl = req.url.split('/');
