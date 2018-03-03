@@ -23,10 +23,19 @@ const server = http.createServer((req, res) => {
 		    res.end(fileContent);
 		}
 	    });
-	} else if (req.url === '/public/scripts/loadingGif.js') {
-	    fs.readFile('./public/scripts/loadingGif.js', (err, fileContent) => {
+	} else if (req.url === '/public/css/styles.css') {
+	    fs.readFile('./public/css/styles.css', (err, fileContent) => {
 		if (err) {
 		    console.log('Error 2');
+		} else {
+		    res.writeHead(200, {'Content-Type': 'text/css'});
+		    res.end(fileContent);
+		}
+	    });
+	}else if (req.url === '/public/scripts/loadingGif.js') {
+	    fs.readFile('./public/scripts/loadingGif.js', (err, fileContent) => {
+		if (err) {
+		    console.log('Error 3');
 		} else {
 		    res.writeHead(200, {'Content-Type': 'text/javascript'});
 		    res.end(fileContent);
@@ -35,7 +44,7 @@ const server = http.createServer((req, res) => {
 	} else if (req.url === '/public/images/lg.ajax-spinner-preloader.gif') {
 	    fs.readFile('./public/images/lg.ajax-spinner-preloader.gif', (err, fileContent) => {
 		if (err) {
-		    console.log('Error 3');
+		    console.log('Error 4');
 		} else {
 		    res.writeHead(200, {'Content-Type': 'image/jpg'});
 		    res.end(fileContent);
